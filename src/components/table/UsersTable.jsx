@@ -20,39 +20,34 @@ const data = {
   ],
   body: [
     {
-      image: 'https://images.pexels.com/photos/2609925/pexels-photo-2609925.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      image: 'https://images.pexels.com/photos/5380112/pexels-photo-5380112.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       name: 'Agustin',
       surname: 'Perez',
-      gender: 'Male',
-      email: 'perez.agustin@gmail.com'
+      dni: '123456789'
     },
     {
-      image: 'https://images.pexels.com/photos/3577955/pexels-photo-3577955.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      image: 'https://images.pexels.com/photos/1080121/pexels-photo-1080121.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       name: 'Matias',
       surname: 'Lucero',
-      gender: 'Male',
-      email: 'lucero.matias@gmail.com'
+      dni: '123456789'
     },
     {
-      image: 'https://images.pexels.com/photos/1220757/pexels-photo-1220757.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      image: 'https://images.pexels.com/photos/1773450/pexels-photo-1773450.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       name: 'Maximiliano',
       surname: 'Perez',
-      gender: 'Male',
-      email: 'perez.maxi@gmail.com'
+      dni: '123456789'
     },
     {
-      image: 'https://images.pexels.com/photos/2609925/pexels-photo-2609925.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      image: 'https://images.pexels.com/photos/2040353/pexels-photo-2040353.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       name: 'Patricio',
       surname: 'Morales',
-      gender: 'Male',
-      email: 'morales.patricio@gmail.com'
+      dni: '123456789'
     },
     {
-      image: 'https://images.pexels.com/photos/3577955/pexels-photo-3577955.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      image: 'https://images.pexels.com/photos/1080121/pexels-photo-1080121.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       name: 'Ramiro',
       surname: 'Rwintered',
-      gender: 'Male',
-      email: 'rwintered.ramiro@gmail.com'
+      dni: '123456789'
     }
   ]
 }
@@ -60,14 +55,12 @@ const data = {
 export default function UsersTable() {
 
   const { header, head, body } = data
-  const getPdfTableRow = (i, user) => {
+  const getPdfTableRow = user => {
+    const { name, surname, dni } = user
     return [
-      i+1,
       '', //Must be an image, not text
-      user.name,
-      user.surname,
-      user.gender,
-      user.email
+      `${surname}, ${name}\n${dni}\nNº:`,
+      ''
     ]
   }
 
@@ -119,7 +112,6 @@ export default function UsersTable() {
 					doc.addImage(
             img,
             'JPEG',
-            // 80 + 84 + 5, 
             cell.x + 6,
             cell.y + 1,
             20,
@@ -127,7 +119,6 @@ export default function UsersTable() {
           )
 				}
       },
-			// head: [['asdf', 'fdas']],
 			body: [
 				[header.description, '']
 			]
@@ -156,36 +147,67 @@ export default function UsersTable() {
 				{ dataKey: 'player', header: 'Jugador' },
 				{ dataKey: 'signature', header: 'Firma' },
 			],
-			body: [
-				['', 'Acuña, Jorge Ariel \nDNI: 32373269 \nNº:', ''],
-				['', 'Oliva, Franco Ezequiel \nDNI: 32373269 \nNº:', ''],
-				['', 'Juncos, Agustin Javier \nDNI: 296057640 \nNº:', ''],
-				['', 'Soler, Diego Fabian \nDNI: 301216560 \nNº:', ''],
-				['', 'Zapata, Pablo Gabriel \nDNI: 30123550 \nNº:', '']
-			]
+
+      body: [...body.map(r => getPdfTableRow(r))],
+
+      didDrawCell: data => {
+        const { row, column, cell } = data
+        if (row.section === 'body' && column.index === 0) {
+          const img = new Image()
+          img.src = body[row.index].image
+          doc.addImage(
+            img,
+            'JPEG',
+            cell.x + 3, 
+            cell.y + 1,
+            14,
+            14
+          )
+        }
+      }
 		})
 
-    // doc.autoTable({
-    //   startY: doc.lastAutoTable.finalY + 8,
-    //   head: [head],
-    //   body: [...body.map((r, i) => getPdfTableRow(i, r))],
-    //   //draw user images
-    //   didDrawCell: data => {
-    //     const { row, column, cell } = data
-    //     if (row.section === 'body' && column.index === 1) {
-    //       const img = new Image()
-    //       img.src = body[row.index].image
-          // doc.addImage(
-          //   img,
-          //   'JPEG',
-          //   cell.x + 4, 
-          //   cell.y,
-          //   6,
-          //   6
-          // )
-    //     }
-    //   }
-    // })
+    doc.autoTable({
+			theme: 'grid',
+			startY: doc.lastAutoTable.settings.startY,
+			margin: { left: 107 },
+
+      headStyles : {
+        fillColor: [228, 228, 228],
+        lineWidth: 1,
+        lineColor: [228, 228, 228],
+        textColor: [54, 54, 54]
+      },
+
+			columnStyles: {
+				0: { columnWidth: 20 },
+				1: { columnWidth: 45 },
+				3: { columnWidth: 20 }
+			},
+			columns: [
+				{ dataKey: 'photo', header: 'Foto' },
+				{ dataKey: 'player', header: 'Jugador' },
+				{ dataKey: 'signature', header: 'Firma' },
+			],
+			body: [...body.map(r => getPdfTableRow(r))],
+
+      didDrawCell: data => {
+        const { row, column, cell } = data
+        if (row.section === 'body' && column.index === 0) {
+          const img = new Image()
+          img.src = body[row.index].image
+          doc.addImage(
+            img,
+            'JPEG',
+            cell.x + 3, 
+            cell.y + 1,
+            14,
+            14
+          )
+        }
+      }
+		})
+    
     doc.save('table.pdf')
   }
 
