@@ -28,10 +28,10 @@ const data = {
     },
     {
       image: 'https://images.pexels.com/photos/3577955/pexels-photo-3577955.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
-      name: 'Diego',
-      surname: 'Perez',
+      name: 'Matias',
+      surname: 'Lucero',
       gender: 'Male',
-      email: 'perez.diego@gmail.com'
+      email: 'lucero.matias@gmail.com'
     },
     {
       image: 'https://images.pexels.com/photos/1220757/pexels-photo-1220757.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
@@ -39,6 +39,20 @@ const data = {
       surname: 'Perez',
       gender: 'Male',
       email: 'perez.maxi@gmail.com'
+    },
+    {
+      image: 'https://images.pexels.com/photos/2609925/pexels-photo-2609925.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      name: 'Patricio',
+      surname: 'Morales',
+      gender: 'Male',
+      email: 'morales.patricio@gmail.com'
+    },
+    {
+      image: 'https://images.pexels.com/photos/3577955/pexels-photo-3577955.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
+      name: 'Ramiro',
+      surname: 'Rwintered',
+      gender: 'Male',
+      email: 'rwintered.ramiro@gmail.com'
     }
   ]
 }
@@ -75,7 +89,6 @@ export default function UsersTable() {
 					cell.styles.fontStyle = 'bold'
 				}
 			},
-			// head: [['asdf', 'fdas']],
 			body: [
 				['Torneo:', data.header.tournament],
 				['Competición:', data.header.competition],
@@ -89,28 +102,31 @@ export default function UsersTable() {
 			theme: 'grid',
 			margin: { left: 80 },
 			columnStyles: {
-				0: { columnWidth: 84 },
-				1: { columnWidth: 26 }
+				0: { columnWidth: 84 }
 			},
 			didParseCell: data => {
-				const { cell } = data
 				if (data.row.section === 'body' && data.column.index === 0) {
+          const { cell } = data
 					cell.styles.fontSize = 6
 				}
-				if (data.row.section === 'body' && data.column.index === 1) {
+			},
+      didDrawCell: data => {
+        if (data.row.section === 'body' && data.column.index === 1) {
+          const { cell } = data
 					const img = new Image()
 					img.src = Sq3Logo
 					console.log(cell)
 					doc.addImage(
             img,
             'JPEG',
-            80 + 84 + cell.x, 
-            cell.y,
+            // 80 + 84 + 5, 
+            cell.x + 6,
+            cell.y + 1,
             20,
             20
           )
 				}
-			},
+      },
 			// head: [['asdf', 'fdas']],
 			body: [
 				[header.description, '']
@@ -120,8 +136,15 @@ export default function UsersTable() {
 		//Users table
 		doc.autoTable({
 			theme: 'grid',
-			startY: doc.lastAutoTable.finalY + 8,
+			startY: doc.lastAutoTable.finalY + 4,
 			margin: { right: 107 },
+
+      headStyles : {
+        fillColor: [228, 228, 228],
+        lineWidth: 1,
+        lineColor: [228, 228, 228],
+        textColor: [54, 54, 54]
+      },
 
 			columnStyles: {
 				0: { columnWidth: 20 },
